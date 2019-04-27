@@ -52,16 +52,16 @@ var Actor = function(options = {}) {
 
   function initHead() {
     var bonce = new THREE.Mesh(
-      new THREE.CircleGeometry(60, 500, 60),
+      new THREE.SphereGeometry(55, 500, 60),
       materials.skin
     );
     head.add(bonce);
     //
     var leftEye = new THREE.Mesh(
-      new THREE.CircleGeometry(5, 10, 5),
+      new THREE.CircleGeometry(5, 10, 50),
       materials.black
     );
-    leftEye.position.set(-20, 25, 30);
+    leftEye.position.set(-20, 25, 61);
     var rightEye = leftEye.clone();
     rightEye.position.x = 20;
     head.add(leftEye);
@@ -81,13 +81,13 @@ var Actor = function(options = {}) {
       new THREE.BoxGeometry(15, 45, 20),
       materials.skin
     );
-    nose.position.set(0, 5, 30);
+    nose.position.set(0, 5, 61);
     nose.rotation.x = -20 * (Math.PI / 180);
     head.add(nose);
     //
     var mouth = new THREE.Mesh(new THREE.CircleGeometry(7, 50), materials.lips);
 
-    mouth.position.set(0, -35, 30);
+    mouth.position.set(0, -35, 61);
     self.mouth = mouth;
     head.add(self.mouth);
 
@@ -202,7 +202,7 @@ var Actor = function(options = {}) {
     self.leftLeg.rotation.x = pulseSingle(-20, 40) * (Math.PI / 180);
     self.rightLeg.rotation.x = pulseSingle(-40, 20) * -1 * (Math.PI / 180);
 
-    if (self.mouth.scale.y < 1.75) {
+    if (self.mouth.scale.y < 1.6) {
       self.mouth.scale.y += 0.01;
     } else {
       self.mouth.scale.y = 1;
