@@ -1,4 +1,4 @@
-let song, fperb, clap, lyrics, moving;
+let song, fperb, clap, lyrics, moving, capture, currlyric;
 let arrview = 0;
 let bpm = 120;
 let framerater = 60;
@@ -15,7 +15,8 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   background(255);
   setBPM(bpm);
-  noStroke();
+  capture = createCapture(VIDEO);
+  capture.size(320, 240);
 
 //these are the song varr
   frameRate(framerater);
@@ -87,26 +88,34 @@ song.play();
 }
 
 function draw(){
+	image(capture, 0, 0, width, height);
 	frameCount++;
 	 //console.log(frameCount);
-	 if(frameCount % round(fperb) == 0 && song.isPlaying()){
+
+	 beatCount();
+
+	 fill(255);
+	 stroke(0)
+	 strokeWeight(2);
+	textAlign(CENTER);
+	textSize(32);
+	textFont('Comic Sans MS');
+	var textdisplay = text( currlyric, width/2, height - 40 );
+}
+
+function beatCount(){
+	if(frameCount % round(fperb) == 0 && song.isPlaying()){
 		secCount++;
 		console.log("beats = "+secCount);
 		//console.log("arrviw = "+ arrview);
 		if (secCount == lyrics[arrview].beat){
 			console.log(lyrics[arrview].lyric);
-			background(255);
+			//background(255);
 			
 			//timer stuff
 			var textdelay = lyrics[arrview+1].beat - lyrics[arrview].beat;
 			console.log(textdelay);
-
-			//text stuff
-			fill(0);
-			textAlign(CENTER);
-			textSize(32);
-			textFont('Comic Sans MS');
-			var textdisplay = text(lyrics[arrview].lyric, width/2, height/2 );
+			currlyric = lyrics[arrview].lyric;
 
 			
 			//this goes at the end!
