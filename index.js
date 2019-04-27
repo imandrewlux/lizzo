@@ -10,7 +10,7 @@ var Pulse = function(hertz, fn) {
   };
 };
 
-var Actor = function(options) {
+var Actor = function(options = {}) {
   var self = this;
   options = options || {};
   var cadence = options.cadence || 1.4;
@@ -18,6 +18,7 @@ var Actor = function(options) {
   this.element.position.x = options.x || 0;
   this.element.position.y = options.y || 0;
   this.element.position.z = options.z || 0;
+  self.options = options;
 
   var materials = {
     white: new THREE.MeshLambertMaterial({
@@ -37,7 +38,7 @@ var Actor = function(options) {
       shading: THREE.FlatShading
     }),
     shirt: new THREE.MeshLambertMaterial({
-      color: 0xffdb58,
+      color: options.shirt,
       shading: THREE.FlatShading
     })
   };
@@ -98,21 +99,32 @@ var Actor = function(options) {
     hair.rotation.x = -20 * (Math.PI / 180);
     head.add(hair);
 
-    var hairTie = new THREE.Mesh(
-      new THREE.BoxGeometry(20, 20, 70),
+    const hairTie = new THREE.Mesh(
+      new THREE.SphereGeometry(20, 20, 70),
       materials.shirt
     );
-    hairTie.position.y = 81;
+    hairTie.position.x = 70;
+    hairTie.position.y = 60;
     hairTie.rotation.x = -20 * (Math.PI / 180);
+
     head.add(hairTie);
 
-    var ponyTail = new THREE.Mesh(
-      new THREE.BoxGeometry(20, 110, 70),
-      materials.black
-    );
-    ponyTail.position.y = 151;
-    ponyTail.rotation.x = -20 * (Math.PI / 180);
-    head.add(ponyTail);
+    const hairTieTwo = hairTie.clone();
+    hairTieTwo.position.x = -70;
+    head.add(hairTieTwo);
+
+    const getHair = () =>
+      new THREE.Mesh(new THREE.SphereGeometry(50, 32, 32), materials.black);
+
+    for (const x of [-80, 80]) {
+      for (let i = 0; i < 5; i++) {
+        const hairball = getHair();
+        hairball.position.x = x;
+        hairball.position.y = -(0 + i * 10);
+
+        head.add(hairball);
+      }
+    }
   }
 
   function initBody() {
@@ -142,11 +154,11 @@ var Actor = function(options) {
     var armGeom = new THREE.BoxGeometry(20, 140, 40);
     armGeom.applyMatrix(new THREE.Matrix4().makeTranslation(0, -100, 0));
     var leftArm = (self.leftArm = new THREE.Mesh(armGeom, materials.skin));
-    leftArm.position.set(30, 220, 20);
+    leftArm.position.set(50, 220, 20);
     var rightArm = (self.rightArm = leftArm.clone());
-    rightArm.position.x = 170;
-    leftArm.rotation.z = -15 * (Math.PI / 180);
-    rightArm.rotation.z = 15 * (Math.PI / 180);
+    rightArm.position.x = 160;
+    leftArm.rotation.z = -50 * (Math.PI / 180);
+    rightArm.rotation.z = 50 * (Math.PI / 60);
     body.add(leftArm);
     body.add(rightArm);
     //
@@ -190,7 +202,7 @@ var Actor = function(options) {
     self.leftLeg.rotation.x = pulseSingle(-20, 40) * (Math.PI / 180);
     self.rightLeg.rotation.x = pulseSingle(-40, 20) * -1 * (Math.PI / 180);
 
-    if (self.mouth.scale.y < 1.5) {
+    if (self.mouth.scale.y < 1.75) {
       self.mouth.scale.y += 0.01;
     } else {
       self.mouth.scale.y = 1;
@@ -289,10 +301,40 @@ var World = function(element) {
     //
     actors = [];
 
-    actors.push(new Actor({ cadence: 1, color: 0x633e19 }));
-    actors.push(new Actor({ cadence: 2, x: 450, z: -450, color: 0xf8e2dc }));
-    actors.push(new Actor({ cadence: 2, x: -450, z: -450, color: 0xefbeb2 }));
-    actors.push(new Actor({ cadence: 3, x: -750, z: -150, color: 0x1b0d06 }));
+    actors.push(
+      new Actor({
+        cadence: 1,
+        color: 0x633e19,
+        shirt: 0xffdb58
+      })
+    );
+    actors.push(
+      new Actor({
+        cadence: 2,
+        x: 450,
+        z: -450,
+        color: 0xf8e2dc,
+        shirt: 0xff69b4
+      })
+    );
+    actors.push(
+      new Actor({
+        cadence: 2,
+        x: -450,
+        z: -450,
+        color: 0xefbeb2,
+        shirt: 0xadff2f
+      })
+    );
+    actors.push(
+      new Actor({
+        cadence: 3,
+        x: -750,
+        z: -150,
+        color: 0x1b0d06,
+        shirt: 0x9370db
+      })
+    );
     actors.push(new Actor({ cadence: 3, x: 750, z: -150, color: 0xd77849 }));
 
     actors.forEach(function(actor) {
