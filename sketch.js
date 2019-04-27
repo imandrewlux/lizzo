@@ -12,7 +12,19 @@ let lyricSets = [
   ["sauce", "boss", "gloss", "chaos"],
   ["cheese", "keys", "squeeze", "pleas"],
   ["cheddar", "better", "grater", "tender"]];
+let lyricEmojiSet = [
+  "🍹",
+  "🍪",
+  "🍰",
+  "🥪",
+  "🍝",
+  "🧀",
+  "🧀",
+];
 let lyricSetNum = 0;
+
+let emojiDrops = [];
+let numEmojiDrops = 5;
 
 function preload() {
   song = loadSound("mp3/Juice_edit.mp3");
@@ -32,6 +44,12 @@ function setup() {
 
   // Choose randomly a lyric set
   chooseLyricSet();
+  for(var i = 0; i < numEmojiDrops; i++) {
+    let emojiId = 'emoji_drop_'+i;
+    let emojiDiv = $('<div id="emoji_drop_'+i+'" class="emoji_drop">'+lyricEmojiSet[lyricSetNum]+'</div>')
+    $('body').append(emojiDiv);
+    emojiDrops[i] = new EmojiDrop("#"+emojiId);
+  }
 
   lyrics = [{ beat: 32, lyric: "Mirror, mirror on the wall"},
     {beat: 35, lyric: "Don't say it, ’cause I know I'm cute (Ooh, baby)"},
@@ -125,6 +143,11 @@ function draw() {
   textSize(32);
   textFont("Comic Sans MS");
   var textdisplay = text(currlyric, width / 2, height - 40);
+
+  for(var i = 0; i < numEmojiDrops; i++) {
+    emojiDrops[i].step();
+    emojiDrops[i].render();
+  }
 }
 
 function beatCount() {
@@ -148,5 +171,28 @@ function beatCount() {
     }
 
     //clap.play();
+  }
+}
+
+class EmojiDrop {
+  constructor(idName){
+    this.x = floor(random(100));
+    this.y = 20;
+    this.y_vel = 1 + floor(random(3)); 
+    this.idName = idName;
+  }
+
+  render() {
+    let emoji = $(this.idName);
+    emoji.css('left', this.x+'vw');
+    emoji.css('top', this.y+'vh');
+  }
+
+  step() {
+    this.y = this.y + this.y_vel;
+    if(this.y > 100) {
+      this.y = -10;
+      this.x = floor(random(100));
+    }
   }
 }
