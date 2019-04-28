@@ -1,5 +1,8 @@
-let song, fperb, clap, lyrics, moving, capture, currlyric;
+let song, fperb, clap, lyrics, moving, capture, currlyric, timesbounced, morebounce, textwidth, cperf, xpos, textdisplay,fontReg, fontBold ;
 let arrview = 0;
+let x = 1;
+let y = 1;
+let pi = 3.14159;
 let bpm = 120;
 let framerater = 60;
 let frameCount = 0;
@@ -29,11 +32,13 @@ let numEmojiDrops = 5;
 function preload() {
   song = loadSound("mp3/Juice_edit.mp3");
   clap = loadSound("mp3/clap.wav");
+  fontReg = loadFont("fonts/YoungSerif-Regular.otf");
+  fontBold = loadFont("fonts/Rubik-BlackItalic.otf");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(255);
+  //background(255);
   setBPM(bpm);
   //   capture = createCapture(VIDEO);
   //   capture.size(320, 240);
@@ -130,44 +135,63 @@ function processLyric(line){
 }
 
 function draw() {
+  clear();
   //   image(capture, 0, 0, width, height);
   frameCount++;
   //   console.log(frameCount);
 
   beatCount();
 
-  fill(255);
-  stroke(0);
+  fill(63, 130, 248);
+  noStroke();
   strokeWeight(2);
   textAlign(CENTER);
-  textSize(32);
-  textFont("Comic Sans MS");
-  var textdisplay = text(currlyric, width / 2, height - 40);
+  textSize(35);
+textFont(fontBold);
+  textdisplay = text(currlyric, width / 2, height - 80);
 
   for(var i = 0; i < numEmojiDrops; i++) {
     emojiDrops[i].step();
     emojiDrops[i].render();
   }
+
+  //bouncing ball
+  if(x < textwidth){
+      
+      y = -abs(120*sin( ((2*pi)/(morebounce*2) )*x ));
+      x += cperf;
+      }
+    fill(255,20,174);
+  ellipse(x+(width/2)-(textwidth/2), y+(height-120), 20, 20); 
+   
 }
 
 function beatCount() {
   if (frameCount % round(fperb) == 0 && song.isPlaying()) {
     secCount++;
     console.log("beats = " + secCount);
-    //console.log("arrviw = "+ arrview);
     if (secCount == lyrics[arrview].beat) {
-      console.log(lyrics[arrview].lyric);
-      //background(255);
+      //console.log(lyrics[arrview].lyric);
+      
 
       //timer stuff
-      var textdelay = lyrics[arrview + 1].beat - lyrics[arrview].beat;
-      console.log(textdelay);
-      currlyric = processLyric(lyrics[arrview].lyric);
-      console.log(currlyric);
-      document.getElementById("text").innerText = currlyric;
+      var textdelay = lyrics[arrview+1].beat - lyrics[arrview].beat;
+      textwidth = textWidth(lyrics[arrview].lyric);
+      timesbounced = textdelay / textwidth;
+      morebounce = textwidth / textdelay;
+      cperf = morebounce / fperb;
+      x=0;
+      y=0;
+
+       currlyric = processLyric(lyrics[arrview].lyric);
+      // console.log(currlyric);
+      // document.getElementById("text").innerText = currlyric;
 
       //this goes at the end!
       arrview++;
+
+    }else if(secCount < 32){
+      currlyric = processLyric("Lizzo");
     }
 
     //clap.play();
